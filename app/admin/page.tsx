@@ -51,8 +51,8 @@ export default function AdminPage() {
 
   const tabs = [
     { id: "overview", label: "Visão Geral", icon: BarChart3 },
-    { id: "categories", label: "Categorias", icon: Database },
-    { id: "services", label: "Serviços", icon: Users }
+    { id: "services", label: "Serviços", icon: Users },
+    { id: "categories", label: "Categorias", icon: Database }
   ] as const
 
   return (
@@ -68,40 +68,30 @@ export default function AdminPage() {
 
             <div>
               <Link href="/" className="flex items-center space-x-2">
-                <div className="flex justify-center items-center bg-emerald-600 p-1.5 rounded-lg hover:bg-emerald-500 transition-colors">
-                  <HeartIcon className="h-6 w-6 text-white " />
-                </div>
-                <h1 className="text-base md:text-xl font-serif text-slate-800 tracking-tight">Brasileiras<span className="text-emerald-600">emKL</span></h1>
-              </Link>
-
+              <div className="flex justify-center items-center bg-emerald-600 p-1.5 rounded-lg hover:bg-emerald-500 transition-colors">
+                <HeartIcon className="h-6 w-6 text-white " />
+              </div>
+              <h1 className="text-base md:text-xl font-serif text-slate-800 tracking-tight">Brasileiras<span className="text-emerald-600">emKL</span></h1>
+            </Link>
             </div>
           </div>
 
-          <div className="flex justify-between items-center">
-            {/* Navigation Tabs */}
-            <div className="flex gap-1 mt-6 bg-slate-100 p-1 rounded-lg w-fit">
-              {tabs.map((tab) => {
-                const Icon = tab.icon
-                return (
-                  <Button
-                    key={tab.id}
-                    variant={activeTab === tab.id ? "default" : "ghost"}
-                    onClick={() => setActiveTab(tab.id as TabType)}
-                    className="flex items-center gap-2"
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span className="hidden md:inline">{tab.label}</span>
-                  </Button>
-                )
-              })}
-            </div>
-            {/* Logout Button */}
-            <Link href="/logout" className="ml-4">
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
-                <LogOut className="h-4 w-4" />
-                <span className="hidden md:inline">Sair</span>
-              </Button>
-            </Link>
+          {/* Navigation Tabs */}
+          <div className="flex gap-1 mt-6 bg-slate-100 p-1 rounded-lg w-fit">
+            {tabs.map((tab) => {
+              const Icon = tab.icon
+              return (
+                <Button
+                  key={tab.id}
+                  variant={activeTab === tab.id ? "default" : "ghost"}
+                  onClick={() => setActiveTab(tab.id as TabType)}
+                  className="flex items-center gap-2"
+                >
+                  <Icon className="h-4 w-4" />
+                  <span className="hidden md:inline">{tab.label}</span>
+                </Button>
+              )
+            })}
           </div>
         </div>
       </div>
@@ -149,19 +139,6 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
-
-            {/* Search Global */}
-            {/* <div className="relative max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
-              <Input
-                placeholder="Buscar serviços ou categorias..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-10"
-              />
-            </div> */}
-
-
 
             {/* Quick Actions */}
             <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">

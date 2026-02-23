@@ -21,7 +21,8 @@ export default function Home() {
     fetch("/api/services")
       .then(res => res.json())
       .then((data: any[]) => {
-        const formatted: Service[] = data.map((s) => ({
+        const servicesData = Array.isArray(data) ? data : []
+        const formatted: Service[] = servicesData.map((s) => ({
           id: s.id,
           name: s.name,
           description: s.description,
@@ -32,12 +33,23 @@ export default function Home() {
         }))
         setServices(formatted)
       })
+      .catch(error => {
+        console.error('Erro ao carregar serviços:', error)
+        setServices([])
+      })
   }
 
- function loadCategories() {
+  function loadCategories() {
     fetch("/api/categories")
       .then(res => res.json())
-      .then(setCategories)
+      .then((data: any[]) => {
+        const categoriesData = Array.isArray(data) ? data : []
+        setCategories(categoriesData)
+      })
+      .catch(error => {
+        console.error('Erro ao carregar categorias:', error)
+        setCategories([])
+      })
   }
   useEffect(() => {
     loadCategories()
@@ -64,7 +76,7 @@ export default function Home() {
           onCategoryChange={setSelectedCategory}
         />
         <div id="services-section" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-stretch gap-6 mb-12">
-          {filteredServices.map(service => (
+          {Array.isArray(filteredServices) && filteredServices.map(service => (
             <ServiceCard key={service.id} service={service} />
           ))}
         </div>

@@ -57,7 +57,7 @@ export default function ServiceHero({
           Todas
         </button>
 
-        {categories.map(cat => (
+        {Array.isArray(categories) && categories.map(cat => (
           <button
             key={cat.id}
             onClick={() => onCategoryChange(cat.id)}
