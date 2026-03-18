@@ -1,6 +1,6 @@
 "use client"
 
-import { MapPinIcon, PhoneIcon, Pencil, Trash2 } from "lucide-react"
+import { MapPinIcon, PhoneIcon, Pencil, Trash2, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export type Service = {
@@ -9,6 +9,7 @@ export type Service = {
   description: string
   address: string
   phone: string
+  link?: string
   category_id: string
   categoryName: string
 }
@@ -58,6 +59,20 @@ export default function ServiceCard({
           <PhoneIcon className="h-4 w-4 mr-2 text-emerald-500" />
           <p>{service.phone}</p>
         </div>
+
+        {service.link && (
+          <div className="flex items-center text-sm text-slate-500">
+            <Globe className="h-4 w-4 mr-2 text-emerald-500" />
+            <a 
+              href={service.link} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-emerald-600 hover:text-emerald-700 underline truncate"
+            >
+              Website
+            </a>
+          </div>
+        )}
 
         {/* Ações admin */}
         {variant === "admin" && (

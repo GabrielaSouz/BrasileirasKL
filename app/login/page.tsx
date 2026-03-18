@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { signIn } from "next-auth/react";
 
 export default function Login() {
     const router = useRouter()
@@ -15,45 +16,25 @@ export default function Login() {
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
     
-    async function handleLogin(e:React.FormEvent) {
-        e.preventDefault()
-        setLoading(true)
+   async function handleLogin(e: React.FormEvent) {
+  e.preventDefault()
 
-        try {
-            const res = await fetch("/api/auth/login",{
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ email, password })
-            })
+  const result = await signIn("credentials", {
+  email,
+  password,
+  redirect: true, // vai redirecionar
+  callbackUrl: "/admin"
+})
 
-            const data = await res.json()
-            setLoading(false)
+  // if (result?.error) {
+  //   toast.error("Email ou senha inválidos")
+  //   setLoading(false)
+  //   return
+  // }
 
-            if(data.error){
-                toast.error(data.error)
-                return
-            }
-
-            // Salva o token em cookies de forma mais segura
-            if (data.session?.access_token) {
-                const expires = new Date()
-                expires.setTime(expires.getTime() + (60 * 60 * 1000)) // 1 hora
-                
-                document.cookie = `sb-access-token=${data.session.access_token}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`
-            }
-
-            toast.success("Login realizado com sucesso!")
-            // Redireciona para a página admin após um pequeno delay
-            setTimeout(() => {
-                router.push("/admin")
-            }, 500)
-        } catch (error) {
-            setLoading(false)
-            toast.error("Erro de conexão. Tente novamente.")
-        }
-    }
+  // router.push("/admin")
+  // router.refresh()
+}
 
     return(
         <div className="h-screen flex flex-col justify-center items-center bg-gray-50">

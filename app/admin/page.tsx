@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input"
 import CategoriesManager from "./components/CategoriesManager"
 import ServicesManager from "./components/ServicesManager"
 import Link from "next/link"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 type Category = {
   id: string
@@ -16,6 +18,8 @@ type Category = {
 type TabType = "overview" | "services" | "categories"
 
 export default function AdminPage() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [categories, setCategories] = useState<Category[]>([])
   const [activeTab, setActiveTab] = useState<TabType>("overview")
   const [search, setSearch] = useState("")
@@ -24,6 +28,19 @@ export default function AdminPage() {
     totalCategories: 0,
     recentServices: 0
   })
+
+  useEffect(() => {
+    if (status === "loading") return // Ainda carregando
+    
+    if (!session) {
+      router.push("/login")
+      return
+    }
+
+    // Só carrega os dados se estiver autenticado
+    loadCategories()
+    loadStats()
+  }, [session, status, router])
 
   function loadCategories() {
     fetch("/api/categories")
@@ -44,16 +61,28 @@ export default function AdminPage() {
     })
   }
 
-  useEffect(() => {
-    loadCategories()
-    loadStats()
-  }, [])
-
   const tabs = [
     { id: "overview", label: "Visão Geral", icon: BarChart3 },
     { id: "services", label: "Serviços", icon: Users },
     { id: "categories", label: "Categorias", icon: Database }
   ] as const
+
+  // Mostrar loading enquanto verifica autenticação
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
+          <p className="mt-4 text-slate-600">Verificando autenticação...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Redirecionar se não estiver autenticado
+  if (!session) {
+    return null // O useEffect vai redirecionar
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">

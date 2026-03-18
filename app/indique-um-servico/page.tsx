@@ -15,6 +15,7 @@ interface ServiceForm {
   description: string
   address: string
   phoneService: string
+  link?: string
 }
 
 export default function IndiqueServico() {
@@ -24,7 +25,8 @@ export default function IndiqueServico() {
     serviceName: "",
     description: "",
     address: "",
-    phoneService: ""
+    phoneService: "",
+    link: ""
   })
   const [loading, setLoading] = useState(false)
 
@@ -54,6 +56,7 @@ export default function IndiqueServico() {
         description: "",
         address: "",
         phoneService: "",
+        link: ""
       })
     } catch (error) {
       toast.error("Erro ao enviar indicação. Tente novamente.")
@@ -161,6 +164,17 @@ export default function IndiqueServico() {
                   placeholder="(19) 99999-9999"
                   className="text-sm sm:text-base"
                   required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="link" className="text-slate-700 text-sm sm:text-base">Website (opcional)</Label>
+                <Input
+                  id="link"
+                  value={form.link}
+                  onChange={(e) => handleInputChange("link", e.target.value)}
+                  placeholder="https://exemplo.com.br"
+                  className="text-sm sm:text-base"
                 />
               </div>
             </div>

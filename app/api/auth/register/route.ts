@@ -1,56 +1,43 @@
 import { NextResponse } from "next/server"
-import { supabase } from "@/lib/supabase"
+import { sql } from "@/lib/neon"
+import bcrypt from "bcryptjs"
 
 export async function POST(req: Request) {
-  const body = await req.json()
-  const { name, email, password } = body
-
-  if (!email || !password) {
-    return NextResponse.json(
-      { error: "Email and password are required" },
-      { status: 400 }
-    )
-  }
-
   try {
-    // 1. Cria o usuário no auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          name, // salva como metadata do usuário
-        },
-      },
-    })
+    const body = await req.json()
+    const { name, email, password } = body
 
-    if (authError) {
-      return NextResponse.json({ error: authError.message }, { status: 400 })
+    if (!email || !password || !name) {
+      return NextResponse.json(
+        { error: "Nome, email e senha são obrigatórios" },
+        { status: 400 }
+      )
     }
 
-    // 2. Cria o perfil na tabela profiles
-    if (authData.user) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: authData.user.id,
-          name: name,
-          email: email,
-        })
+    // Verificar se usuário já existe
+    const existingUsers = await sql`
+      SELECT id FROM users WHERE email = ${email}
+    `
 
-      if (profileError) {
-        console.error('Erro ao criar perfil:', profileError)
-        // Se falhar o perfil, tenta deletar o usuário criado
-        await supabase.auth.admin.deleteUser(authData.user.id)
-        return NextResponse.json({ 
-          error: "Erro ao criar perfil do usuário" 
-        }, { status: 500 })
-      }
+    if (existingUsers.length > 0) {
+      return NextResponse.json(
+        { error: "Email já cadastrado" },
+        { status: 409 }
+      )
     }
+
+    // Hash da senha
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    // Criar usuário
+    await sql`
+      INSERT INTO users (name, email, password)
+      VALUES (${name}, ${email}, ${hashedPassword})
+    `
 
     return NextResponse.json({ 
-      success: true, 
-      user: authData.user 
+      success: true,
+      message: "Usuário criado com sucesso"
     })
 
   } catch (error) {
@@ -60,3 +47,4 @@ export async function POST(req: Request) {
     }, { status: 500 })
   }
 }
+

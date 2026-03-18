@@ -2,23 +2,26 @@
 
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
+import { signOut } from "next-auth/react"
 import { toast } from "sonner"
 
 export default function Logout() {
   const router = useRouter()
 
   useEffect(() => {
-    // Limpa todos os cookies do Supabase
-    document.cookie.split(";").forEach(cookie => {
-      const eqPos = cookie.indexOf("=")
-      const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim()
-      if (name.includes('sb-')) {
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+    const performLogout = async () => {
+      try {
+        await signOut({ redirect: false })
+        toast.success("Logout realizado com sucesso!")
+        router.push("/")
+      } catch (error) {
+        console.error("Erro no logout:", error)
+        toast.error("Erro ao fazer logout")
+        router.push("/")
       }
-    })
+    }
 
-    toast.success("Logout realizado com sucesso!")
-    router.push("/")
+    performLogout()
   }, [router])
 
   return (

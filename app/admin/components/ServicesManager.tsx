@@ -24,6 +24,7 @@ interface ServiceForm {
   description?: string
   address?: string
   phone?: string
+  link?: string
   category_id?: string
 }
 
@@ -47,6 +48,7 @@ export default function ServicesManager({ categories, onCategoriesChange, global
         description: s.description,
         address: s.address,
         phone: s.phone,
+        link: s.link,
         category_id: s.category_id,
         categoryName: s.categories?.name || "Sem categoria",
       }))
@@ -205,6 +207,15 @@ export default function ServicesManager({ categories, onCategoriesChange, global
             placeholder="Telefone"
             value={form.phone || ""}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            disabled={loading}
+          />
+        </div>
+
+        <div className="mt-4">
+          <Input
+            placeholder="Link do website (opcional)"
+            value={form.link || ""}
+            onChange={(e) => setForm({ ...form, link: e.target.value })}
             disabled={loading}
           />
         </div>

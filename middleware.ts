@@ -1,25 +1,25 @@
+// middleware.ts
 import { NextResponse } from "next/server"
-import { NextRequest } from 'next/server'
+import type { NextRequest } from "next/server"
+import { getToken } from "next-auth/jwt"
 
 export async function middleware(req: NextRequest) {
-  // Se não está tentando acessar rotas protegidas, continua
-  if (!req.nextUrl.pathname.startsWith('/admin')) {
-    return NextResponse.next()
+  const { pathname } = req.nextUrl
+
+  // Permite páginas públicas
+  if (!pathname.startsWith("/admin")) return NextResponse.next()
+
+  // Pega o token JWT do NextAuth
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+
+  if (!token) {
+    const loginUrl = new URL("/login", req.url)
+    return NextResponse.redirect(loginUrl)
   }
 
-  // Verifica se tem o cookie de autenticação
-  const authToken = req.cookies.get('sb-access-token')?.value
-
-  if (!authToken) {
-    // Redireciona para login se não tiver token
-    const loginUrl = new URL('/login', req.url)
-    return NextResponse.redirect(loginUrl.toString())
-  }
-
-  // Permite o acesso se tiver o token (validação mais simples)
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/admin/:path*']
+  matcher: ["/admin/:path*"],
 }
