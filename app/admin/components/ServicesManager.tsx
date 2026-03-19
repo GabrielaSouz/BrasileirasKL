@@ -198,15 +198,16 @@ export default function ServicesManager({ categories, onCategoriesChange, global
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <Input
-            placeholder="Endereço"
-            value={form.address || ""}
-            onChange={(e) => setForm({ ...form, address: e.target.value })}
-            disabled={loading}
-          />
-          <Input
             placeholder="Telefone"
             value={form.phone || ""}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            disabled={loading}
+          />
+
+           <Input
+            placeholder="Endereço"
+            value={form.address || ""}
+            onChange={(e) => setForm({ ...form, address: e.target.value })}
             disabled={loading}
           />
         </div>
