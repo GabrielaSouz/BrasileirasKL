@@ -15,6 +15,7 @@ const authConfig = {
         console.log("=== AUTHORIZE DEBUG ===")
         console.log("Email recebido:", credentials?.email)
         console.log("NEXTAUTH_URL:", process.env.NEXTAUTH_URL)
+        console.log("NODE_ENV:", process.env.NODE_ENV)
         
         if (!credentials?.email || !credentials?.password) {
           console.log("Credenciais faltando")
@@ -58,7 +59,8 @@ const authConfig = {
     })
   ],
   session: {
-    strategy: "jwt" as const
+    strategy: "jwt" as const,
+    maxAge: 24 * 60 * 60, // 24 horas
   },
   callbacks: {
     async jwt({ token, user }: any) {
@@ -78,7 +80,9 @@ const authConfig = {
     signIn: "/login",
   },
   events: {},
-  adapter: undefined
+  adapter: undefined,
+  trustHost: true, // Importante para Vercel
+  useSecureCookies: process.env.NODE_ENV === "production",
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig)

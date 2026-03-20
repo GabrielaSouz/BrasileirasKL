@@ -20,6 +20,11 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
 
+    console.log("=== LOGIN DEBUG ===")
+    console.log("Email:", email)
+    console.log("Password:", password ? "***" : "empty")
+    console.log("Current URL:", window.location.href)
+
     try {
       const result = await signIn("credentials", {
         email,
@@ -28,18 +33,27 @@ export default function Login() {
       })
 
       console.log("Login result:", result)
+      console.log("Result keys:", Object.keys(result || {}))
 
       if (result?.error) {
+        console.log("Login error:", result.error)
         toast.error("Email ou senha inválidos")
         setLoading(false)
         return
       }
 
       if (result?.ok) {
+        console.log("Login successful!")
         toast.success("Login realizado com sucesso!")
-        router.push("/admin")
-        router.refresh()
+        
+        // Pequeno delay para garantir que o cookie foi setado
+        setTimeout(() => {
+          console.log("Redirecting to /admin...")
+          router.push("/admin")
+          router.refresh()
+        }, 100)
       } else {
+        console.log("Login failed - unknown result:", result)
         toast.error("Erro ao fazer login")
       }
     } catch (error) {
