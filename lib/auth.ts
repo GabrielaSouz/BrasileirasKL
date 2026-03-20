@@ -14,6 +14,7 @@ const authConfig = {
       async authorize(credentials) {
         console.log("=== AUTHORIZE DEBUG ===")
         console.log("Email recebido:", credentials?.email)
+        console.log("NEXTAUTH_URL:", process.env.NEXTAUTH_URL)
         
         if (!credentials?.email || !credentials?.password) {
           console.log("Credenciais faltando")

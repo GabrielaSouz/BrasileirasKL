@@ -92,6 +92,7 @@ CREATE TABLE users (
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=sua-chave-secreta-aqui
 DATABASE_URL=postgresql://...
+RESEND_API_KEY=sua-chave-api-aqui
 
 Rodar no terminal: 
 npx auth secret

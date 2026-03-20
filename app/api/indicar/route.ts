@@ -1,11 +1,21 @@
 import { Resend } from "resend"
 import { NextResponse } from "next/server"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Só inicializa o Resend se a chave existir
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 export async function POST(req: Request) {
   try {
     const data = await req.json()
+
+    // Se não tiver API key, apenas salva os dados (não envia email)
+    if (!resend) {
+      console.log("RESEND_API_KEY não configurada - dados recebidos:", data)
+      return NextResponse.json({ 
+        success: true, 
+        message: "Indicação recebida (email não configurado)" 
+      })
+    }
 
     await resend.emails.send({
       from: "Brasileiras em KL - Indicações <onboarding@resend.dev>",
