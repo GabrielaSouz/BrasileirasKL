@@ -99,7 +99,7 @@ export default function ServiceCard({
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(service.address)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={expandedAddress ? "whitespace-normal text-emerald-600 hover:text-emerald-700 underline" : "line-clamp-1 text-emerald-600 hover:text-emerald-700 underline"}
+                  className={expandedAddress ? "whitespace-normal text-slate-600 hover:text-slate-700 underline" : "line-clamp-1 text-slate-600 hover:text-slate-700 underline"}
                 >
                   {service.address}
                 </a>
@@ -117,7 +117,7 @@ export default function ServiceCard({
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(service.address)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={expandedAddress ? "whitespace-normal text-emerald-600 hover:text-emerald-700 underline" : "line-clamp-1 text-emerald-600 hover:text-emerald-700 underline"}
+                  className={expandedAddress ? "whitespace-normal text-slate-600 hover:text-slate-700 underline" : "line-clamp-1 text-slate-600 hover:text-slate-700 underline"}
                 >
                   {service.address}
                 </a>
@@ -139,7 +139,7 @@ export default function ServiceCard({
           <PhoneIcon className="h-4 w-4 mr-2 text-emerald-500" />
           <a 
             href={`tel:${service.phone}`}
-            className="text-emerald-600 hover:text-emerald-700 underline"
+            className="text-slate-600 hover:text-slate-700 underline"
           >
             {service.phone}
           </a>
@@ -152,7 +152,7 @@ export default function ServiceCard({
               href={service.link} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-emerald-600 hover:text-emerald-700 underline truncate"
+              className="text-slate-600 hover:text-slate-700 underline truncate"
             >
               Website
             </a>
