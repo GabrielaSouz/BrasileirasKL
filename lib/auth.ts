@@ -16,6 +16,8 @@ const authConfig = {
         console.log("Email recebido:", credentials?.email)
         console.log("NEXTAUTH_URL:", process.env.NEXTAUTH_URL)
         console.log("NODE_ENV:", process.env.NODE_ENV)
+        console.log("NEXTAUTH_SECRET exists:", !!process.env.NEXTAUTH_SECRET)
+        console.log("VERCEL_ENV:", process.env.VERCEL_ENV)
         
         if (!credentials?.email || !credentials?.password) {
           console.log("Credenciais faltando")
@@ -46,6 +48,12 @@ const authConfig = {
           }
 
           console.log("Login autorizado com sucesso!")
+          console.log("Retornando user object:", {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+          })
+          
           return {
             id: user.id,
             name: user.name,
@@ -64,25 +72,45 @@ const authConfig = {
   },
   callbacks: {
     async jwt({ token, user }: any) {
+      console.log("=== JWT CALLBACK ===")
+      console.log("Token antes:", token)
+      console.log("User no callback:", user)
+      
       if (user) {
         token.id = user.id
+        console.log("Token com user.id:", token)
       }
+      
+      console.log("Token depois:", token)
       return token
     },
     async session({ session, token }: any) {
+      console.log("=== SESSION CALLBACK ===")
+      console.log("Session antes:", session)
+      console.log("Token no session callback:", token)
+      
       if (token) {
         session.user.id = token.id as string
+        console.log("Session com token.id:", session)
       }
+      
+      console.log("Session depois:", session)
       return session
     }
   },
   pages: {
     signIn: "/login",
   },
-  events: {},
+  events: {
+    async signIn(message: any) {
+      console.log("=== SIGN IN EVENT ===")
+      console.log("User:", message.user)
+      console.log("Account:", message.account)
+    }
+  },
   adapter: undefined,
-  trustHost: true, // Importante para Vercel
-  useSecureCookies: process.env.NODE_ENV === "production",
+  trustHost: true, // Forçado para Vercel
+  useSecureCookies: false, // Forçado false para testar
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig)
