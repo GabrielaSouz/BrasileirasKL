@@ -17,24 +17,38 @@ export default function Login() {
     const [loading, setLoading] = useState(false)
     
    async function handleLogin(e: React.FormEvent) {
-  e.preventDefault()
+    e.preventDefault()
+    setLoading(true)
 
-  const result = await signIn("credentials", {
-  email,
-  password,
-  redirect: true, // vai redirecionar
-  callbackUrl: "/admin"
-})
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false, // vamos controlar manualmente
+      })
 
-  // if (result?.error) {
-  //   toast.error("Email ou senha inválidos")
-  //   setLoading(false)
-  //   return
-  // }
+      console.log("Login result:", result)
 
-  // router.push("/admin")
-  // router.refresh()
-}
+      if (result?.error) {
+        toast.error("Email ou senha inválidos")
+        setLoading(false)
+        return
+      }
+
+      if (result?.ok) {
+        toast.success("Login realizado com sucesso!")
+        router.push("/admin")
+        router.refresh()
+      } else {
+        toast.error("Erro ao fazer login")
+      }
+    } catch (error) {
+      console.error("Login error:", error)
+      toast.error("Erro ao fazer login")
+    } finally {
+      setLoading(false)
+    }
+  }
 
     return(
         <div className="h-screen flex flex-col justify-center items-center bg-gray-50">
