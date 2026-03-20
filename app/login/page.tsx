@@ -20,54 +20,27 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
 
-    console.log("=== LOGIN DEBUG ===")
-    console.log("Email:", email)
-    console.log("Password:", password ? "***" : "empty")
-    console.log("Current URL:", window.location.href)
-
     try {
       const result = await signIn("credentials", {
         email,
         password,
-        redirect: false, // Controle manual
+        redirect: false,
       })
 
-      console.log("Login result:", result)
-
       if (result?.error) {
-        console.log("Login error:", result.error)
         toast.error("Email ou senha inválidos")
         setLoading(false)
         return
       }
 
       if (result?.ok) {
-        console.log("Login successful!")
         toast.success("Login realizado com sucesso!")
         
-        // Verifica se a sessão foi criada antes de redirecionar
-        setTimeout(async () => {
-          try {
-            const sessionResponse = await fetch("/api/auth/session")
-            const session = await sessionResponse.json()
-            console.log("Session check:", session)
-            
-            if (session?.user) {
-              console.log("Session valid, redirecting to /admin...")
-              window.location.href = "/admin"
-            } else {
-              console.log("No session found, staying on login")
-              toast.error("Erro na sessão. Tente novamente.")
-              setLoading(false)
-            }
-          } catch (error) {
-            console.error("Session check error:", error)
-            toast.error("Erro ao verificar sessão")
-            setLoading(false)
-          }
-        }, 1000)
+        // Aguarda um pouco para o cookie ser setado
+        setTimeout(() => {
+          window.location.href = "/admin"
+        }, 500)
       } else {
-        console.log("Login failed - unknown result:", result)
         toast.error("Erro ao fazer login")
         setLoading(false)
       }
