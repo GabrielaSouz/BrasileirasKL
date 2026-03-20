@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import CategoriesManager from "./components/CategoriesManager"
 import ServicesManager from "./components/ServicesManager"
+import SubcategoriesManager from "./components/SubcategoriesManager"
 import Link from "next/link"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
@@ -15,7 +16,7 @@ type Category = {
   name: string
 }
 
-type TabType = "overview" | "services" | "categories"
+type TabType = "overview" | "services" | "categories" | "subcategories"
 
 export default function AdminPage() {
   const { data: session, status } = useSession()
@@ -64,7 +65,8 @@ export default function AdminPage() {
   const tabs = [
     { id: "overview", label: "Visão Geral", icon: BarChart3 },
     { id: "services", label: "Serviços", icon: Users },
-    { id: "categories", label: "Categorias", icon: Database }
+    { id: "categories", label: "Categorias", icon: Database },
+    { id: "subcategories", label: "Subcategorias", icon: Settings }
   ] as const
 
   // Mostrar loading enquanto verifica autenticação
@@ -195,6 +197,11 @@ export default function AdminPage() {
         {/* Categories Tab */}
         {activeTab === "categories" && (
           <CategoriesManager onChange={loadCategories} globalSearch={search} />
+        )}
+
+        {/* Subcategories Tab */}
+        {activeTab === "subcategories" && (
+          <SubcategoriesManager categories={categories} onCategoriesChange={loadCategories} />
         )}
       </div>
     </div>

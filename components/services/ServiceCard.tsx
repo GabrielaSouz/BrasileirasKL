@@ -1,7 +1,8 @@
 "use client"
 
-import { MapPinIcon, PhoneIcon, Pencil, Trash2, Globe } from "lucide-react"
+import { MapPinIcon, PhoneIcon, Pencil, Trash2, Globe, ChevronDown, ChevronUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useState } from "react"
 
 export type Service = {
   id: string
@@ -12,6 +13,8 @@ export type Service = {
   link?: string
   category_id: string
   categoryName: string
+  subcategory_id?: string
+  subcategoryName?: string
 }
 
 interface ServiceCardProps {
@@ -27,32 +30,97 @@ export default function ServiceCard({
   onEdit,
   onDelete,
 }: ServiceCardProps) {
+  const [expandedDescription, setExpandedDescription] = useState(false)
+  const [expandedAddress, setExpandedAddress] = useState(false)
+
+  const isLongDescription = service.description.length > 120
+  const isLongAddress = service.address.length > 50
+
   return (
     <div className="
       bg-white rounded-lg p-6
       shadow-sm border border-slate-100
       hover:shadow-xl transition-shadow duration-300
-      min-h-[220px] flex flex-col
+      min-h-[220px] flex flex-col 
     ">
       {/* Conteúdo */}
       <div className="space-y-2">
         <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full uppercase tracking-wider">
           {service.categoryName}
+          {service.subcategoryName && (
+            <span className="ml-1">• {service.subcategoryName}</span>
+          )}
         </span>
 
         <h1 className="text-xl font-bold text-slate-900 line-clamp-2">
           {service.name}
         </h1>
 
-        <p className="text-slate-600 text-sm line-clamp-4">
-          {service.description}
-        </p>
+        {/* Descrição com expandir/recolher */}
+        <div className="text-slate-600 text-sm">
+          {isLongDescription && !expandedDescription ? (
+            <div>
+              <p className="line-clamp-3">{service.description}</p>
+              <button
+                onClick={() => setExpandedDescription(true)}
+                className="text-emerald-600 hover:text-emerald-700 text-xs font-medium mt-1 flex items-center gap-1"
+              >
+                <ChevronDown className="w-3 h-3" />
+                Ler mais
+              </button>
+            </div>
+          ) : (
+            <div>
+              <p className={expandedDescription ? "" : "line-clamp-4"}>
+                {service.description}
+              </p>
+              {isLongDescription && expandedDescription && (
+                <button
+                  onClick={() => setExpandedDescription(false)}
+                  className="text-emerald-600 hover:text-emerald-700 text-xs font-medium mt-1 flex items-center gap-1"
+                >
+                  <ChevronUp className="w-3 h-3" />
+                  Ler menos
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="mt-auto pt-4 border-t border-slate-100 space-y-3">
-        <div className="flex items-center text-sm text-slate-500">
-          <MapPinIcon className="h-4 w-4 mr-2 text-emerald-500" />
-          <p className="line-clamp-1">{service.address}</p>
+        {/* Endereço com expandir/recolher */}
+        <div className="flex items-start text-sm text-slate-500">
+          <MapPinIcon className="h-4 w-4 mr-2 text-emerald-500 mt-0.5 flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            {isLongAddress && !expandedAddress ? (
+              <div>
+                <p className="line-clamp-1">{service.address}</p>
+                <button
+                  onClick={() => setExpandedAddress(true)}
+                  className="text-emerald-600 hover:text-emerald-700 text-xs font-medium mt-1 flex items-center gap-1"
+                >
+                  <ChevronDown className="w-3 h-3" />
+                  Ver endereço completo
+                </button>
+              </div>
+            ) : (
+              <div>
+                <p className={expandedAddress ? "whitespace-normal" : "line-clamp-1"}>
+                  {service.address}
+                </p>
+                {isLongAddress && expandedAddress && (
+                  <button
+                    onClick={() => setExpandedAddress(false)}
+                    className="text-emerald-600 hover:text-emerald-700 text-xs font-medium mt-1 flex items-center gap-1"
+                  >
+                    <ChevronUp className="w-3 h-3" />
+                    Recolher
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center text-sm text-slate-500 font-medium">

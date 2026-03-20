@@ -13,9 +13,12 @@ export async function GET() {
         s.phone,
         s.link,
         s.category_id,
-        c.name as category_name
+        s.subcategory_id,
+        c.name as category_name,
+        sc.name as subcategory_name
       FROM services s
       LEFT JOIN categories c ON s.category_id = c.id
+      LEFT JOIN subcategories sc ON s.subcategory_id = sc.id
       ORDER BY s.created_at DESC
     `
     return NextResponse.json(data)
@@ -30,8 +33,8 @@ export async function POST(req: Request) {
     const body = await req.json()
     
     await sql`
-      INSERT INTO services (name, description, address, phone, link, category_id)
-      VALUES (${body.name}, ${body.description}, ${body.address}, ${body.phone}, ${body.link}, ${body.category_id})
+      INSERT INTO services (name, description, address, phone, link, category_id, subcategory_id)
+      VALUES (${body.name}, ${body.description}, ${body.address}, ${body.phone}, ${body.link}, ${body.category_id}, ${body.subcategory_id})
     `
     
     return NextResponse.json({ success: true }, { status: 201 })
@@ -52,7 +55,8 @@ export async function PUT(req: Request) {
           address = ${body.address}, 
           phone = ${body.phone}, 
           link = ${body.link},
-          category_id = ${body.category_id}
+          category_id = ${body.category_id},
+          subcategory_id = ${body.subcategory_id}
       WHERE id = ${body.id}
     `
     

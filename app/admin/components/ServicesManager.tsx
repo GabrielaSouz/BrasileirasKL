@@ -26,10 +26,12 @@ interface ServiceForm {
   phone?: string
   link?: string
   category_id?: string
+  subcategory_id?: string
 }
 
 export default function ServicesManager({ categories, onCategoriesChange, globalSearch }: Props) {
   const [services, setServices] = useState<Service[]>([])
+  const [subcategories, setSubcategories] = useState<any[]>([])
   const [search, setSearch] = useState("")
   const [filteredServices, setFilteredServices] = useState<Service[]>([])
   const [form, setForm] = useState<ServiceForm>({})
@@ -50,7 +52,9 @@ export default function ServicesManager({ categories, onCategoriesChange, global
         phone: s.phone,
         link: s.link,
         category_id: s.category_id,
-        categoryName: s.categories?.name || "Sem categoria",
+        categoryName: s.category_name || "Sem categoria",
+        subcategory_id: s.subcategory_id,
+        subcategoryName: s.subcategory_name
       }))
       setServices(formatted)
     } catch (err) {
@@ -59,8 +63,19 @@ export default function ServicesManager({ categories, onCategoriesChange, global
     }
   }
 
+  async function loadSubcategories() {
+    try {
+      const res = await fetch("/api/subcategories")
+      const data = await res.json()
+      setSubcategories(data)
+    } catch (err) {
+      console.error("Erro ao carregar subcategorias:", err)
+    }
+  }
+
   useEffect(() => {
     loadServices()
+    loadSubcategories()
   }, [])
 
   useEffect(() => {
@@ -150,7 +165,15 @@ export default function ServicesManager({ categories, onCategoriesChange, global
 
   function handleEdit(service: Service) {
     setEditingId(service.id)
-    setForm(service)
+    setForm({
+      name: service.name,
+      description: service.description,
+      address: service.address,
+      phone: service.phone,
+      link: service.link,
+      category_id: service.category_id,
+      subcategory_id: service.subcategory_id
+    })
   }
 
   function handleCancel() {
@@ -164,18 +187,18 @@ export default function ServicesManager({ categories, onCategoriesChange, global
       <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
         <h2 className="text-xl font-bold mb-6 text-slate-900">Adicionar/Editar Serviço</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            placeholder="Nome do serviço"
-            value={form.name || ""}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            disabled={loading}
-          />
+        <Input
+          placeholder="Nome do serviço"
+          value={form.name || ""}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          disabled={loading}
+        />
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <select
             className="border border-slate-300 rounded-md p-2 w-full focus:border-emerald-500 focus:outline-none"
             value={form.category_id || ""}
-            onChange={(e) => setForm({ ...form, category_id: e.target.value })}
+            onChange={(e) => setForm({ ...form, category_id: e.target.value, subcategory_id: "" })}
             disabled={loading}
           >
             <option value="">Selecione a categoria</option>
@@ -184,6 +207,22 @@ export default function ServicesManager({ categories, onCategoriesChange, global
                 {cat.name}
               </option>
             ))}
+          </select>
+
+          <select
+            className="border border-slate-300 rounded-md p-2 w-full focus:border-emerald-500 focus:outline-none"
+            value={form.subcategory_id || ""}
+            onChange={(e) => setForm({ ...form, subcategory_id: e.target.value })}
+            disabled={loading || !form.category_id}
+          >
+            <option value="">Selecione a subcategoria (opcional)</option>
+            {subcategories
+              .filter(sub => sub.category_id === form.category_id)
+              .map((sub) => (
+                <option key={sub.id} value={sub.id}>
+                  {sub.name}
+                </option>
+              ))}
           </select>
         </div>
 

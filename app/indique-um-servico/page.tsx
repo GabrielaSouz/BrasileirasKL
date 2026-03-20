@@ -120,7 +120,7 @@ export default function IndiqueServico() {
               <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Dados do Serviço</h3>
 
               <div className="space-y-2">
-                <Label htmlFor="serviceName" className="text-slate-700 text-sm sm:text-base">Nome do Prestador de Serviço</Label>
+                <Label htmlFor="serviceName" className="text-slate-700 text-sm sm:text-base">Nome do Serviço</Label>
                 <Input
                   id="serviceName"
                   value={form.serviceName}

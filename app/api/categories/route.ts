@@ -2,15 +2,33 @@ import { NextResponse } from "next/server"
 import { sql } from "@/lib/neon"
 
 
-//Listar Categorias
+//Listar Categorias com subcategorias
 export async function GET() {
   try {
-    const data = await sql`
+    const categories = await sql`
       SELECT id, name 
       FROM categories 
-      ORDER BY created_at DESC
+      ORDER BY name ASC
     `
-    return NextResponse.json(data)
+    
+    // Buscar subcategorias para cada categoria
+    const categoriesWithSubs = await Promise.all(
+      categories.map(async (category: any) => {
+        const subcategories = await sql`
+          SELECT id, name 
+          FROM subcategories 
+          WHERE category_id = ${category.id}
+          ORDER BY name ASC
+        `
+        
+        return {
+          ...category,
+          subcategories: subcategories
+        }
+      })
+    )
+    
+    return NextResponse.json(categoriesWithSubs)
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
