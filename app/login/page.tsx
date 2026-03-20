@@ -45,11 +45,27 @@ export default function Login() {
         console.log("Login successful!")
         toast.success("Login realizado com sucesso!")
         
-        // Espera um pouco mais para garantir que o cookie foi setado
-        setTimeout(() => {
-          console.log("Redirecting to /admin...")
-          window.location.href = "/admin" // Usa window.location em vez de router.push
-        }, 500)
+        // Verifica se a sessão foi criada antes de redirecionar
+        setTimeout(async () => {
+          try {
+            const sessionResponse = await fetch("/api/auth/session")
+            const session = await sessionResponse.json()
+            console.log("Session check:", session)
+            
+            if (session?.user) {
+              console.log("Session valid, redirecting to /admin...")
+              window.location.href = "/admin"
+            } else {
+              console.log("No session found, staying on login")
+              toast.error("Erro na sessão. Tente novamente.")
+              setLoading(false)
+            }
+          } catch (error) {
+            console.error("Session check error:", error)
+            toast.error("Erro ao verificar sessão")
+            setLoading(false)
+          }
+        }, 1000)
       } else {
         console.log("Login failed - unknown result:", result)
         toast.error("Erro ao fazer login")
