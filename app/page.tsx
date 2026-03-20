@@ -51,6 +51,7 @@ export default function Home() {
           description: s.description,
           address: s.address,
           phone: s.phone,
+          link: s.link, // ✅ Adicionando o campo link
           category_id: s.category_id,
           categoryName: s.category_name || "Sem categoria",
           subcategory_id: s.subcategory_id,

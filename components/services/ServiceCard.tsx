@@ -91,24 +91,36 @@ export default function ServiceCard({
       <div className="mt-auto pt-4 border-t border-slate-100 space-y-3">
         {/* Endereço com expandir/recolher */}
         <div className="flex items-start text-sm text-slate-500">
-          <MapPinIcon className="h-4 w-4 mr-2 text-emerald-500 mt-0.5 flex-shrink-0" />
+          <MapPinIcon className="h-4 w-4 mr-2 text-emerald-500 mt-0.5 shrink-0" />
           <div className="flex-1 min-w-0">
             {isLongAddress && !expandedAddress ? (
               <div>
-                <p className="line-clamp-1">{service.address}</p>
+                <a 
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(service.address)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={expandedAddress ? "whitespace-normal text-emerald-600 hover:text-emerald-700 underline" : "line-clamp-1 text-emerald-600 hover:text-emerald-700 underline"}
+                >
+                  {service.address}
+                </a>
                 <button
                   onClick={() => setExpandedAddress(true)}
                   className="text-emerald-600 hover:text-emerald-700 text-xs font-medium mt-1 flex items-center gap-1"
                 >
                   <ChevronDown className="w-3 h-3" />
-                  Ver endereço completo
+                  Ver mais
                 </button>
               </div>
             ) : (
               <div>
-                <p className={expandedAddress ? "whitespace-normal" : "line-clamp-1"}>
+                <a 
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(service.address)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={expandedAddress ? "whitespace-normal text-emerald-600 hover:text-emerald-700 underline" : "line-clamp-1 text-emerald-600 hover:text-emerald-700 underline"}
+                >
                   {service.address}
-                </p>
+                </a>
                 {isLongAddress && expandedAddress && (
                   <button
                     onClick={() => setExpandedAddress(false)}
@@ -125,7 +137,12 @@ export default function ServiceCard({
 
         <div className="flex items-center text-sm text-slate-500 font-medium">
           <PhoneIcon className="h-4 w-4 mr-2 text-emerald-500" />
-          <p>{service.phone}</p>
+          <a 
+            href={`tel:${service.phone}`}
+            className="text-emerald-600 hover:text-emerald-700 underline"
+          >
+            {service.phone}
+          </a>
         </div>
 
         {service.link && (
