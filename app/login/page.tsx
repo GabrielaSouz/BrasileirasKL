@@ -29,33 +29,16 @@ export default function Login() {
       const result = await signIn("credentials", {
         email,
         password,
-        redirect: false, // vamos controlar manualmente
+        redirect: true, // Deixa o NextAuth controlar o redirecionamento
+        callbackUrl: "/admin"
       })
 
       console.log("Login result:", result)
-      console.log("Result keys:", Object.keys(result || {}))
 
-      if (result?.error) {
-        console.log("Login error:", result.error)
-        toast.error("Email ou senha inválidos")
-        setLoading(false)
-        return
-      }
-
-      if (result?.ok) {
-        console.log("Login successful!")
-        toast.success("Login realizado com sucesso!")
-        
-        // Pequeno delay para garantir que o cookie foi setado
-        setTimeout(() => {
-          console.log("Redirecting to /admin...")
-          router.push("/admin")
-          router.refresh()
-        }, 100)
-      } else {
-        console.log("Login failed - unknown result:", result)
-        toast.error("Erro ao fazer login")
-      }
+      // Com redirect=true, se houver erro, o NextAuth redireciona para página de erro
+      // Se não houver erro, redireciona para callbackUrl
+      toast.success("Login realizado com sucesso!")
+      
     } catch (error) {
       console.error("Login error:", error)
       toast.error("Erro ao fazer login")
